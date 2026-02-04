@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>WebSocket Graphics Test</title>
+	<style>
+		body {
+			font-family: sans-serif;
+			padding: 20px;
+			max-width: 600px;
+		}
+
+		section {
+			border: 1px solid #ccc;
+			padding: 15px;
+			margin-bottom: 20px;
+		}
+
+		label {
+			display: block;
+			margin-top: 8px;
+		}
+
+		input {
+			width: 100%;
+			padding: 5px;
+		}
+
+		button {
+			margin-top: 10px;
+			padding: 8px 12px;
+		}
+
+		#status {
+			margin-bottom: 15px;
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+
+	<h1>Graphics Trigger Test</h1>
+	<div id="status">Connecting…</div>
+
+	<section>
+		<h2>Lower Third</h2>
+
+		<label>Line 1</label>
+		<input id="lt1" placeholder="Name">
+
+		<label>Line 2</label>
+		<input id="lt2" placeholder="Subtitle">
+
+		<label>Duration (ms, 0 = stay)</label>
+		<input id="ltd" type="number" value="3000">
+
+		<button onclick="sendLowerThird()">Show Lower Third</button>
+		<button onclick="clearLowerThird()">Hide Lower Third</button>
+	</section>
+
+	<section>
+		<h2>VS Banner</h2>
+
+		<label>Left Team</label>
+		<input id="vs1" placeholder="Team A">
+
+		<label>Right Team</label>
+		<input id="vs2" placeholder="Team B">
+
+		<label>Duration (ms, 0 = stay)</label>
+		<input id="vsd" type="number" value="3000">
+
+		<button onclick="sendVs()">Show VS</button>
+		<button onclick="clearVs()">Hide VS</button>
+	</section>
+
+	<section>
+		<h2>Left Half Slide</h2>
+
+		<button onclick="send({root: 'leftHalf', f1: 'in'})">Slide In Left Half</button>
+		<button onclick="send({root: 'leftHalf', f1: 'out'})">Slide Out Left Half</button>
+	</section>
+
+	<section>
+		<h2>Groups Control</h2>
+		<p style="margin-top:0">Edit team names and who passed. One submit updates all 16 rows.</p>
+
+		<div id="groupsGrid" style="display:grid; grid-template-columns: 1fr 120px; gap: 8px 12px; align-items:center;">
+			<!-- Group 1 -->
+			<div><strong>Group 1</strong></div><div></div>
+			<input id="g1t1_name" placeholder="Group 1 Team 1">
+			<label style="display:flex; align-items:center; gap:8px;"><input id="g1t1_passed" type="checkbox" style="width:auto;">Passed</label>
+			<input id="g1t2_name" placeholder="Group 1 Team 2">
+			<label style="display:flex; align-items:center; gap:8px;"><input id="g1t2_passed" type="checkbox" style="width:auto;">Passed</label>
+			<input id="g1t3_name" placeholder="Group 1 Team 3">
+			<label style="display:flex; align-items:center; gap:8px;"><input id="g1t3_passed" type="checkbox" style="width:auto;">Passed</label>
+			<input id="g1t4_name" placeholder="Group 1 Team 4">
+			<label style="display:flex; align-items:center; gap:8px;"><input id="g1t4_passed" type="checkbox" style="width:auto;">Passed</label>
+
+			<!-- Group 2 -->
+			<div style="margin-top:6px"><strong>Group 2</strong></div><div></div>
+			<input id="g2t1_name" placeholder="Group 2 Team 1">
+			<label style="display:flex; align-items:center; gap:8px;"><input id="g2t1_passed" type="checkbox" style="width:auto;">Passed</label>
+			<input id="g2t2_name" placeholder="Group 2 Team 2">
+			<label style="display:flex; align-items:center; gap:8px;"><input id="g2t2_passed" type="checkbox" style="width:auto;">Passed</label>
+			<input id="g2t3_name" placeholder="Group 2 Team 3">
+			<label style="display:flex; align-items:center; gap:8px;"><input id="g2t3_passed" type="checkbox" style="width:auto;">Passed</label>
+			<input id="g2t4_name" placeholder="Group 2 Team 4">
+			<label style="display:flex; align-items:center; gap:8px;"><input id="g2t4_passed" type="checkbox" style="width:auto;">Passed</label>
+
+			<!-- Group 3 -->
+			<div style="margin-top:6px"><strong>Group 3</strong></div><div></div>
+			<input id="g3t1_name" placeholder="Group 3 Team 1">
+			<label style="display:flex; align-items:center; gap:8px;"><input id="g3t1_passed" type="checkbox" style="width:auto;">Passed</label>
+			<input id="g3t2_name" placeholder="Group 3 Team 2">
+			<label style="display:flex; align-items:center; gap:8px;"><input id="g3t2_passed" type="checkbox" style="width:auto;">Passed</label>
+			<input id="g3t3_name" placeholder="Group 3 Team 3">
+			<label style="display:flex; align-items:center; gap:8px;"><input id="g3t3_passed" type="checkbox" style="width:auto;">Passed</label>
+			<input id="g3t4_name" placeholder="Group 3 Team 4">
+			<label style="display:flex; align-items:center; gap:8px;"><input id="g3t4_passed" type="checkbox" style="width:auto;">Passed</label>
+
+			<!-- Group 4 -->
+			<div style="margin-top:6px"><strong>Group 4</strong></div><div></div>
+			<input id="g4t1_name" placeholder="Group 4 Team 1">
+			<label style="display:flex; align-items:center; gap:8px;"><input id="g4t1_passed" type="checkbox" style="width:auto;">Passed</label>
+			<input id="g4t2_name" placeholder="Group 4 Team 2">
+			<label style="display:flex; align-items:center; gap:8px;"><input id="g4t2_passed" type="checkbox" style="width:auto;">Passed</label>
+			<input id="g4t3_name" placeholder="Group 4 Team 3">
+			<label style="display:flex; align-items:center; gap:8px;"><input id="g4t3_passed" type="checkbox" style="width:auto;">Passed</label>
+			<input id="g4t4_name" placeholder="Group 4 Team 4">
+			<label style="display:flex; align-items:center; gap:8px;"><input id="g4t4_passed" type="checkbox" style="width:auto;">Passed</label>
+		</div>
+
+		<button onclick="submitGroups()">Submit Groups</button>
+		<div id="groupsStatus" style="margin-top:8px; font-size: 0.95em;"></div>
+	</section>
+
+	<section>
+		<h2>Knockouts Control</h2>
+
+		<label>Slot</label>
+		<select id="knock_slot" style="width:100%; padding:5px;">
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+			<option value="6">6</option>
+			<option value="7">7</option>
+			<option value="8">8</option>
+			<option value="9">9</option>
+			<option value="10">10</option>
+			<option value="11">11</option>
+			<option value="12">12</option>
+			<option value="13">13</option>
+			<option value="14">14</option>
+			<option value="15">15</option>
+			<option value="16">16</option>
+		</select>
+
+		<label>Team Name</label>
+		<input id="knock_name" placeholder="Team name">
+
+		<button onclick="submitKnock()">Submit Knock Slot</button>
+		<div id="knockStatus" style="margin-top:8px; font-size: 0.95em;"></div>
+	</section>
+
+	<section>
+		<h2>Test</h2>
+
+		<button onclick="test()">Test Patch</button>
+	</section>
+
+	<script>
+		const WS_URL = "ws://172.29.70.86:9002";
+		let ws;
+
+		function connect() {
+			ws = new WebSocket(WS_URL);
+
+			ws.onopen = () => {
+				document.getElementById("status").innerText = "Connected";
+				// Ask the server for the current tournament state on connect
+				ws.send(JSON.stringify({ type: "get_state" }));
+			};
+
+			ws.onclose = () => {
+				document.getElementById("status").innerText = "Disconnected";
+				setTimeout(connect, 2000);
+			};
+
+			ws.onerror = () => {
+				document.getElementById("status").innerText = "WebSocket error";
+			};
+
+			ws.onmessage = (ev) => {
+				let msg;
+				try { msg = JSON.parse(ev.data); } catch { return; }
+
+				// ws2 will send full state updates as { type: "state", state: {...} }
+				if (msg.type === "state" && msg.state) {
+					window.__tournamentState = msg.state;
+					populateFromState(msg.state);
+				}
+			};
+		}
+
+		connect();
+
+		function send(obj) {
+			if (ws && ws.readyState === WebSocket.OPEN) {
+				ws.send(JSON.stringify(obj));
+			} else {
+				alert("WebSocket not connected");
+			}
+		}
+
+		function sendLowerThird() {
+			send({
+				root: "lowerThird",
+				f1: document.getElementById("lt1").value,
+				f2: document.getElementById("lt2").value,
+				duration: Number(document.getElementById("ltd").value)
+			});
+		}
+
+		function clearLowerThird() {
+			send({
+				root: "lowerThird",
+				f1: "",
+				f2: "",
+				duration: 0
+			});
+		}
+
+		function sendVs() {
+			send({
+				root: "vs",
+				f1: document.getElementById("vs1").value,
+				f2: document.getElementById("vs2").value,
+                duration: Number(document.getElementById("vsd").value)
+			});
+		}
+
+		function clearVs() {
+			send({
+				root: "vs",
+				f1: "",
+				f2: ""
+			});
+		}
+
+		function test(){
+			ws.send(JSON.stringify({
+			type: "patch",
+			path: "groups.groups.1.teams.3.name",
+			value: "BEEP BOOP"
+			}));
+		}
+
+		function sendPatch(path, value) {
+			send({ type: "patch", path, value });
+		}
+
+		function populateFromState(state) {
+			// Fill groups fields
+			try {
+				const groups = state.groups?.groups || [];
+				for (let gi = 0; gi < groups.length; gi++) {
+					const g = groups[gi];
+					const teams = g.teams || [];
+					for (let ti = 0; ti < teams.length; ti++) {
+						const t = teams[ti];
+						const gNum = gi + 1;
+						const tNum = ti + 1;
+						const nameEl = document.getElementById(`g${gNum}t${tNum}_name`);
+						const passEl = document.getElementById(`g${gNum}t${tNum}_passed`);
+						if (nameEl) nameEl.value = (t.name ?? "");
+						if (passEl) passEl.checked = !!t.passed;
+					}
+				}
+			} catch (e) {
+				console.warn("populateFromState groups failed", e);
+			}
+
+			// Knockouts UI doesn't need prefill for now (single-slot editor), but we can show current slot value when slot changes
+			try {
+				const slotSel = document.getElementById("knock_slot");
+				if (slotSel && !slotSel.__bound) {
+					slotSel.__bound = true;
+					slotSel.addEventListener("change", () => {
+						prefillKnockName();
+					});
+				}
+				prefillKnockName();
+			} catch (e) {
+				console.warn("populateFromState knockouts failed", e);
+			}
+		}
+
+		function prefillKnockName() {
+			const state = window.__tournamentState;
+			if (!state) return;
+			const slotSel = document.getElementById("knock_slot");
+			const nameEl = document.getElementById("knock_name");
+			if (!slotSel || !nameEl) return;
+			const slotId = Number(slotSel.value);
+			const slots = state.knockouts?.slots || [];
+			const idx = slotId - 1;
+			if (idx >= 0 && idx < slots.length) {
+				nameEl.value = (slots[idx].teamName ?? "");
+			}
+		}
+
+		function submitGroups() {
+			// Read all 16 fields and patch them up to the server
+			for (let gi = 1; gi <= 4; gi++) {
+				for (let ti = 1; ti <= 4; ti++) {
+					const nameEl = document.getElementById(`g${gi}t${ti}_name`);
+					const passEl = document.getElementById(`g${gi}t${ti}_passed`);
+					if (!nameEl || !passEl) continue;
+
+					const namePath = `groups.groups.${gi - 1}.teams.${ti - 1}.name`;
+					const passPath = `groups.groups.${gi - 1}.teams.${ti - 1}.passed`;
+					sendPatch(namePath, nameEl.value);
+					sendPatch(passPath, !!passEl.checked);
+				}
+			}
+
+			const statusEl = document.getElementById("groupsStatus");
+			if (statusEl) statusEl.innerText = "Submitted group updates.";
+		}
+
+		function submitKnock() {
+			const slotSel = document.getElementById("knock_slot");
+			const nameEl = document.getElementById("knock_name");
+			if (!slotSel || !nameEl) return;
+
+			const slotId = Number(slotSel.value);
+			const idx = slotId - 1;
+			const path = `knockouts.slots.${idx}.teamName`;
+			sendPatch(path, nameEl.value);
+
+			const statusEl = document.getElementById("knockStatus");
+			if (statusEl) statusEl.innerText = `Submitted slot ${slotId}.`;
+		}
+	</script>
+
+</body>
+</html>

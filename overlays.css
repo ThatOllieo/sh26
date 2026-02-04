@@ -1,0 +1,71 @@
+:root{
+    --shBlue: #015fc1;
+    --shBlueDarker: #0256b0;
+    --shBlueUltraDark: #00244a;
+    --shOrange: #e7953f;
+    --shOrangeDarker: #db8e3b;
+}
+
+body{
+    width: 100vw;
+    height: 100vh;
+    background: transparent;
+    margin: 0;
+    padding: 0;
+    
+    font-family: "motor", monospace;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.leftHalf{
+    width: 40%; 
+    height:100%;
+    position: absolute;
+    top:0; 
+    left:0; 
+    overflow: hidden; 
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    transform: translateX(-110%);
+}
+
+.leftHalfBackground{
+    width: 100%; 
+    height:100%;
+    position: absolute;
+    top:0; 
+    left:0; 
+    overflow: hidden; 
+    background: var(--shBlueDarker);
+
+    clip-path: polygon(0 0, 100% 0, calc(100% - 100px) 100%, 0% 100%);
+}
+
+.leftHalfBackgroundShadow{
+    width: 30%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    /* shape-following shadow */
+    filter: drop-shadow(0px 2.5px 10px black);
+    transform: translateX(-110%);
+}
+
+.leftHalfTitle{
+    margin: 30px calc(30px + 10vw) 0 30px;
+    font-size: 60px;
+    color: white;
+}
+
+.botImage{
+    max-width: 600px;
+    max-height: 600px;
+    margin: 30px 0 0 45px;
+}
