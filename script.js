@@ -7,6 +7,7 @@ document.getElementById('nameBar').style.transition = "transform 0.4s ease-in-ou
 
 document.getElementById('leftHalfBackgroundShadow').style.transition = "transform 0.4s ease-in-out";
 document.getElementById('leftHalf').style.transition = "transform 0.4s ease-in-out";
+document.getElementById('topLeftTimer').style.transition = "transform 0.4s ease-in-out";
 
 let ws = null;
 let wsConnected = false;
@@ -96,6 +97,14 @@ function connectWs() {
                 document.getElementById('leftHalf').style.transform = "translateX(-110%)";
             }
         }
+        else if(msg.root === "timerInOut"){
+            if(msg.f1 === "in"){
+                document.getElementById('topLeftTimer').style.transform = "translateX(0)";
+            }
+            else if(msg.f1 === "out"){
+                document.getElementById('topLeftTimer').style.transform = "translateX(-110%)";
+            }
+        }
         return;
 	};
 }
@@ -112,3 +121,43 @@ setInterval(() => {
 		connectWs();
 	}
 }, 5000);
+
+  // Set your target time here (UNIX timestamp in seconds)
+  const TARGET_UNIX_SECONDS = 1770229200; // example
+
+  const el = document.getElementById("topLeftTimerTime");
+
+  function pad2(n) {
+    return String(n).padStart(2, "0");
+  }
+
+  function render() {
+    const nowSeconds = Math.floor(Date.now() / 1000);
+    let remaining = TARGET_UNIX_SECONDS - nowSeconds;
+
+    if (remaining <= 0) {
+      el.textContent = "00:00:00";
+      // Or: el.textContent = "Time's up!";
+      return;
+    }
+
+    const days = Math.floor(remaining / 86400);
+    remaining %= 86400;
+
+    const hours = Math.floor(remaining / 3600);
+    remaining %= 3600;
+
+    const minutes = Math.floor(remaining / 60);
+    const seconds = remaining % 60;
+
+    const hh = pad2(hours);
+    const mm = pad2(minutes);
+    const ss = pad2(seconds);
+
+    el.textContent = days > 0
+      ? `${days}d ${hh}:${mm}:${ss}`
+      : `${hh}:${mm}:${ss}`;
+  }
+
+  render();
+  setInterval(render, 250); // updates 4x/sec so it stays crisp

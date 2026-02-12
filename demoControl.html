@@ -38,6 +38,27 @@
 	</style>
 </head>
 <body>
+<datalist id="global-suggestions">
+  <option value="Lightning McQueens Drive"></option>
+  <option value="JarvIIs"></option>
+  <option value="BMO"></option>
+  <option value="Coffee Machine"></option>
+  <option value="Stage Crew"></option>
+  <option value="UAS Team Peryton"></option>
+  <option value="Indecisive Namers"></option>
+  <option value="NBA Youngboys"></option>
+  <option value="UNNAMED"></option>
+  <option value="Premature Acceleration"></option>
+  <option value="Momentum"></option>
+  <option value="STEM and Order"></option>
+  <option value="Steel Smashers"></option>
+  <option value="S.1.s.T.R.o.m"></option>
+  <option value="?"></option>
+  <option value="seals"></option>
+  <option value="Team Aura"></option>
+  <option value="Quantum Drive"></option>
+  <!-- add as many as you want -->
+</datalist>
 
 	<h1>Graphics Trigger Test</h1>
 	<div id="status">Connecting…</div>
@@ -79,6 +100,13 @@
 
 		<button onclick="send({root: 'leftHalf', f1: 'in'})">Slide In Left Half</button>
 		<button onclick="send({root: 'leftHalf', f1: 'out'})">Slide Out Left Half</button>
+	</section>
+
+	<section>
+		<h2>Top Left Timer Slide</h2>
+
+		<button onclick="send({root: 'timerInOut', f1: 'in'})">Slide In Top Left Timer</button>
+		<button onclick="send({root: 'timerInOut', f1: 'out'})">Slide Out Top Left Timer</button>
 	</section>
 
 	<section>
@@ -170,9 +198,8 @@
 
 		<button onclick="test()">Test Patch</button>
 	</section>
-
+	<script src="url.js"></script>
 	<script>
-		const WS_URL = "ws://172.29.70.86:9002";
 		let ws;
 
 		function connect() {
@@ -344,6 +371,20 @@
 			const statusEl = document.getElementById("knockStatus");
 			if (statusEl) statusEl.innerText = `Submitted slot ${slotId}.`;
 		}
+
+
+  function attachGlobalDatalist(root = document) {
+    root.querySelectorAll('input[type="text"], input:not([type]), textarea')
+      .forEach(el => el.setAttribute('list', 'global-suggestions'));
+  }
+
+  // Run once on page load
+  attachGlobalDatalist();
+
+  // If you dynamically create inputs later, this keeps it global:
+  const obs = new MutationObserver(() => attachGlobalDatalist());
+  obs.observe(document.documentElement, { childList: true, subtree: true });
+
 	</script>
 
 </body>

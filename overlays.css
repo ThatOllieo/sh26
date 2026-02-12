@@ -69,3 +69,17 @@ body{
     max-height: 600px;
     margin: 30px 0 0 45px;
 }
+
+.topLeftTimer{
+    position: absolute;
+    top: 20px;
+    left: 0px;
+    background: var(--shBlueDarker);
+    padding: 10px 40px 10px 20px;
+    box-shadow: 0px 2.5px 10px rgba(0,0,0,0.5);
+    color: white;
+
+
+    clip-path: polygon(0 0, 100% 0, calc(100% - 20px) 100%, 0% 100%);
+    font-size: 60px;
+}
